@@ -20,6 +20,8 @@ const navbar = document.querySelector('.navbar');
 const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-links a');
 const hero = document.querySelector('.hero');
+const heroShapes = document.querySelectorAll('.hero-shapes .shape');
+const scrollIndicator = document.querySelector('.scroll-indicator');
 
 // Detect mobile devices
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
@@ -56,9 +58,27 @@ function handleScroll() {
         // Round to whole pixels to prevent jumps
         const parallaxOffset = Math.round(currentScroll * 0.5);
         hero.style.transform = `translate3d(0, ${parallaxOffset}px, 0)`;
+
+        // Subtle parallax on floating shapes (different speeds for depth)
+        heroShapes.forEach((shape, index) => {
+            const speed = 0.1 + (index * 0.05);
+            const offset = Math.round(currentScroll * speed);
+            shape.style.transform = `translateY(${offset}px)`;
+        });
     } else if (hero && isMobile) {
         // Reset on mobile
         hero.style.transform = 'translate3d(0, 0, 0)';
+    }
+
+    // Hide scroll indicator after scrolling
+    if (scrollIndicator) {
+        if (currentScroll > 100) {
+            scrollIndicator.style.opacity = '0';
+            scrollIndicator.style.pointerEvents = 'none';
+        } else {
+            scrollIndicator.style.opacity = '1';
+            scrollIndicator.style.pointerEvents = 'auto';
+        }
     }
 
     lastScroll = currentScroll;
@@ -109,11 +129,12 @@ document.querySelectorAll('.timeline-item, .education-card, .skill-category, .co
     }, 3000 + (index * 100)); // Stagger fallback animations
 });
 
-// Typing effect for hero subtitle (optional enhancement)
+// Typing effect for hero subtitle (handles gradient text)
 const subtitle = document.querySelector('.hero-subtitle');
 if (subtitle) {
     const text = subtitle.textContent;
     subtitle.textContent = '';
+    subtitle.style.opacity = '1'; // Make sure it's visible
     let i = 0;
 
     const typeWriter = () => {
@@ -126,6 +147,72 @@ if (subtitle) {
 
     // Start typing effect after a short delay
     setTimeout(typeWriter, 1000);
+}
+
+// Enhanced button hover effects with ripple
+document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('mouseenter', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        this.style.setProperty('--ripple-x', x + 'px');
+        this.style.setProperty('--ripple-y', y + 'px');
+    });
+});
+
+// Add click effect to tags
+document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', function(e) {
+        // Create a subtle pulse effect on click
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 100);
+    });
+});
+
+// Smooth scroll for scroll indicator click
+if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', () => {
+        const skillsSection = document.querySelector('.skills');
+        if (skillsSection) {
+            const offsetTop = skillsSection.offsetTop - 80;
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+    scrollIndicator.style.cursor = 'pointer';
+}
+
+// Add hover effect to timeline markers
+document.querySelectorAll('.timeline-marker').forEach(marker => {
+    marker.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.2)';
+    });
+    marker.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+});
+
+// Lazy load optimization for shapes (only animate when visible)
+const heroSection = document.querySelector('.hero');
+if (heroSection && !isMobile) {
+    const shapeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            heroShapes.forEach(shape => {
+                if (entry.isIntersecting) {
+                    shape.style.animationPlayState = 'running';
+                } else {
+                    shape.style.animationPlayState = 'paused';
+                }
+            });
+        });
+    }, { threshold: 0 });
+
+    shapeObserver.observe(heroSection);
 }
 
 // Console message for developers
