@@ -283,7 +283,7 @@ body {
     margin-bottom: 1.5rem;
     animation: fadeInUp 0.8s ease 0.2s backwards;
     letter-spacing: -0.01em;
-    min-height: 2.5rem; /* Reserve space for typing effect */
+    min-height: 4rem; /* Reserve space for typing effect */
 }
 
 .hero-description {
@@ -861,7 +861,7 @@ body {
 
 .contact-card span {
     font-weight: 500;
-    word-break: break-word;
+    white-space: nowrap;
 }
 
 /* Footer */
@@ -1007,7 +1007,7 @@ body {
 
     .hero-subtitle {
         font-size: 1.5rem;
-        min-height: 1.875rem; /* Reserve space for typing effect on tablet */
+        min-height: 2rem; /* Reserve space for typing effect on tablet */
     }
 
     .nav-links {
@@ -1128,7 +1128,7 @@ body {
 
     .hero-subtitle {
         font-size: 1.25rem;
-        min-height: 1.5625rem; /* Reserve space for typing effect on mobile */
+        min-height: 2rem; /* Reserve space for typing effect on mobile */
     }
 
     .nav-links {
