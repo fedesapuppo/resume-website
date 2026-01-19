@@ -13,56 +13,33 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar scroll effect
+// Consolidated scroll handler with requestAnimationFrame to prevent jumps
+let ticking = false;
 let lastScroll = 0;
 const navbar = document.querySelector('.navbar');
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const hero = document.querySelector('.hero');
 
-window.addEventListener('scroll', () => {
+// Detect mobile devices
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
+function handleScroll() {
     const currentScroll = window.pageYOffset;
 
+    // Navbar shadow effect
     if (currentScroll > 100) {
         navbar.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
     } else {
         navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
     }
 
-    lastScroll = currentScroll;
-});
-
-// Intersection Observer for fade-in animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observe timeline items and education cards
-document.querySelectorAll('.timeline-item, .education-card, .skill-category').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(el);
-});
-
-// Active navigation link highlighting
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-
-window.addEventListener('scroll', () => {
+    // Active navigation link highlighting
     let current = '';
-
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.clientHeight;
-        if (window.pageYOffset >= sectionTop - 200) {
+        if (currentScroll >= sectionTop - 200) {
             current = section.getAttribute('id');
         }
     });
@@ -73,15 +50,63 @@ window.addEventListener('scroll', () => {
             link.classList.add('active');
         }
     });
-});
 
-// Add a subtle parallax effect to hero section
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+    // Parallax effect with rounded values to prevent fractional pixel jumps
+    if (hero && !isMobile && currentScroll < window.innerHeight) {
+        // Round to whole pixels to prevent jumps
+        const parallaxOffset = Math.round(currentScroll * 0.5);
+        hero.style.transform = `translate3d(0, ${parallaxOffset}px, 0)`;
+    } else if (hero && isMobile) {
+        // Reset on mobile
+        hero.style.transform = 'translate3d(0, 0, 0)';
     }
+
+    lastScroll = currentScroll;
+    ticking = false;
+}
+
+// Single scroll listener with requestAnimationFrame throttling
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        window.requestAnimationFrame(handleScroll);
+        ticking = true;
+    }
+}, { passive: true });
+
+// Intersection Observer for fade-in animations
+// Use more lenient settings on mobile for better visibility
+const observerOptions = {
+    threshold: isMobile ? 0.05 : 0.15,
+    rootMargin: isMobile ? '0px 0px -30px 0px' : '0px 0px -80px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+
+            // Clean up willChange after animation completes
+            setTimeout(() => {
+                entry.target.style.willChange = 'auto';
+                observer.unobserve(entry.target);
+            }, 650);
+        }
+    });
+}, observerOptions);
+
+// Observe timeline items, education cards, skill categories, contact cards, and section titles
+document.querySelectorAll('.timeline-item, .education-card, .skill-category, .contact-card, .section-title').forEach((el, index) => {
+    el.style.willChange = 'opacity, transform';
+    observer.observe(el);
+
+    // Fallback: ensure elements become visible even if observer doesn't fire
+    // This is especially important on some mobile browsers
+    setTimeout(() => {
+        if (!el.classList.contains('animate-in')) {
+            el.classList.add('animate-in');
+            el.style.willChange = 'auto';
+        }
+    }, 3000 + (index * 100)); // Stagger fallback animations
 });
 
 // Typing effect for hero subtitle (optional enhancement)
