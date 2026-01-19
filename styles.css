@@ -224,10 +224,25 @@ body {
     border-radius: 2px;
 }
 
+/* Title container for sections with grey background */
+.skills .section-title,
+.education .section-title {
+    background-color: white;
+    display: inline-block;
+    padding: 1rem 3rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .skill-category {
@@ -385,8 +400,10 @@ body {
 
 .education-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .education-card {
@@ -456,7 +473,7 @@ body {
 
 .contact-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     max-width: 900px;
     margin: 0 auto;
@@ -543,6 +560,12 @@ body {
         font-size: 2rem;
     }
 
+    .skills .section-title,
+    .education .section-title {
+        padding: 1rem 2rem;
+        font-size: 1.75rem;
+    }
+
     .job-header {
         flex-direction: column;
         align-items: flex-start;
@@ -569,6 +592,13 @@ body {
     .btn {
         text-align: center;
         width: 100%;
+    }
+
+    /* Single column layout for mobile */
+    .skills-grid,
+    .education-grid,
+    .contact-cards {
+        grid-template-columns: 1fr;
     }
 }
 
