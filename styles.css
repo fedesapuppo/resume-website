@@ -529,36 +529,16 @@ body {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-}
-
-.tag::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.4s ease, height 0.4s ease;
-    z-index: 0;
-}
-
-.tag:hover::before {
-    width: 200%;
-    height: 200%;
-}
-
-.tag span {
-    position: relative;
-    z-index: 1;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .tag:hover {
+    background-color: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
 /* Experience Section */
