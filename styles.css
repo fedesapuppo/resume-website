@@ -283,6 +283,7 @@ body {
     margin-bottom: 1.5rem;
     animation: fadeInUp 0.8s ease 0.2s backwards;
     letter-spacing: -0.01em;
+    min-height: 2.5rem; /* Reserve space for typing effect */
 }
 
 .hero-description {
@@ -1006,6 +1007,7 @@ body {
 
     .hero-subtitle {
         font-size: 1.5rem;
+        min-height: 1.875rem; /* Reserve space for typing effect on tablet */
     }
 
     .nav-links {
@@ -1126,6 +1128,7 @@ body {
 
     .hero-subtitle {
         font-size: 1.25rem;
+        min-height: 1.5625rem; /* Reserve space for typing effect on mobile */
     }
 
     .nav-links {
